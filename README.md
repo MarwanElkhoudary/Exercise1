@@ -1,10 +1,8 @@
 # Exercise1
 Simple App
-------------
 
 ### Introduction
 Exercise 1 is simple app, contain 3 pages Signup, Login and Home page.
---------
 
 ### Goals
 - Using Nodemailer technology.
