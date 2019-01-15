@@ -3,7 +3,7 @@ const path = require("path");
 const addUserQuery = require ('../src/database/query/addUser');
 const queryString = require('query-string');
 const bcrypt = require("bcryptjs");
-
+const dbCheckEmail = require('../src/database/query/dbCheckEmail');
 
 getPublicPages = (target, req, res) => {
   const reqPage = {
@@ -65,15 +65,47 @@ const postSignup = (request, response) => {
           }));
 
         } else {
-          response.end(JSON.stringify({
+            response.end(JSON.stringify({
             err: null,
             msg: "suc"
           }));
-
-        }
+         }
       });
     });
   });
 };
 
-module.exports = { getHome, getPublicPages, postSignup };
+const postLogin = (request, response) => {
+  let userDate = "";
+  request.on("data", chunk => {
+    userDate += chunk;
+  });
+
+  request.on("end", () => {
+    userDateParse = JSON.parse(userDate);
+    console.log('userDateParse', userDateParse);
+    if(userDateParse.email.trim().length===0 || userDateParse.password.trim().length===0)
+    return response.end(JSON.stringify({ err: "Please ! Enter Your Email/Password" }));
+    dbCheckEmail(userDateParse.email, (err, dbResult) => {
+      if (!dbResult[0])
+        return response.end(JSON.stringify({ err: "Email Not Found" }));
+      bcrypt.compare(userDateParse.password, dbResult[0].pass, (err, res) => {
+        if (err) return response.end(JSON.stringify({ err }));
+        if (res === false)
+          return response.end(JSON.stringify({ err: "Wrong Password !" }));
+        cookieAndAuth.createCookie(dbResult[0].id, (err, token) => {
+          if (err) return response.end(JSON.stringify({ err }));
+
+          response.setHeader(
+            "Set-Cookie",
+            `data=${token};httpOnly;Max-Age=90000000`
+          );
+
+          response.end(JSON.stringify({ err: null, result: "Login" }));
+        });
+      });
+    });
+  });
+};
+
+module.exports = { getHome, getPublicPages, postSignup,  postLogin};

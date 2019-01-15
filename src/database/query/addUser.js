@@ -17,8 +17,8 @@ const signUpQuery= (first_name, surname, email, gender, password, cb)=>{
         }else{
             console.log('result',result);
             
-            cb(null,result)
+            cb(null, result.rows)
         }
     })
 }
- module.exports=signUpQuery
+ module.exports = signUpQuery
