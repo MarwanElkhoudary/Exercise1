@@ -11,6 +11,8 @@ const router = (request, response) => {
        handlers.getHome("static", request, response);
   } else if (endpoint == "/signup" && method == "GET") {
     handlers.getPublicPages("signup", request, response);
+  } else if (endpoint == "/login" && method == "GET") {
+    handlers.getPublicPages("login", request, response);
   } else if (
     (endpoint.includes("public/login") ||
       endpoint.includes("public/signup") ||
@@ -20,6 +22,8 @@ const router = (request, response) => {
     handlers.getPublicPages("static", request, response);
   } else if (endpoint == "/signup" && method == "POST") {
     handlers.postSignup(request, response);
+  }else if (endpoint == "/login" && method == "POST") {
+    handlers.postLogin(request, response);
   }
 };
 
